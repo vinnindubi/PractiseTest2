@@ -9,7 +9,9 @@ use App\Models\User;
 class UserRoleController extends Controller
 {
     public function index($id){
-        $roles = Role::find($id);
+        $value = User::find($id);
+        $data=$value->roles;
+        return response()->json($data);
     }
     public function store(Request $request,$id){
         $validated = $request->validate([
@@ -17,7 +19,7 @@ class UserRoleController extends Controller
             "role_id*"=> "exists:roles,id",
         ]);
         $data=User::find($id);
-        $value=$data->roles()->sync($validated["role_id"]);
+        $data->roles()->sync($validated["role_id"]);
 
         return response()->json([
             "message"=>"role attached to user",
