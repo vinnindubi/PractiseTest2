@@ -6,22 +6,22 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 
 
-class PermissionController extends Controller
+class PermissionRoleController extends Controller
 {
     public function index($id){
         $data=Role::find( $id );
-        $permissions = $data->permissions()->get();
+        $permissions = $data->permissions()->where("role_id",$id)->get();
         return response()->json($permissions);
 
         }
         public function store(Request $request,$id){
             $validated=$request->validate([
                 "permission_id"=>"required|array",
-                "permission_id.*"=>"exists:permissions,id"
+                "permission_id.*"=>"exists:permissions,id"//For each item in the array permission_id, check if it exists in the permissions table.
 
             ]);
             $data=Role::findOrFail($id);
-             $data->permissions()->syncWithoutDetaching($validated["permission_id"]//remember sync, attach 
+             $data->permissions()->sync($validated["permission_id"]//remember sync, attach 
             );
             
         return response()->json([
@@ -30,4 +30,5 @@ class PermissionController extends Controller
         ]);
 
         }
+        
 }
